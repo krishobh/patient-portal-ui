@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
-import PatientHeader from "@/components/patient/PatientHeader";
-import ReportTypes from "@/components/patient/ReportTypes";
-import ReportList from "@/components/patient/ReportList";
 import HomeworkSection from "@/components/ui/HomeworkSection";
-import ScheduleTile from "@/components/ui/ScheduleTile";
-import { FileText, User, Calendar } from "lucide-react";
+import NotesSection from "@/components/ui/NotesSection";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Calendar, Clock,Settings, LogOut, Video } from "lucide-react";
 import { useApi } from "@/hooks/useApi";
 import { useUser } from "@/contexts/UserContext";
 import ProtectedLayout from "@/layouts/ProtectedLayout";
@@ -56,7 +54,7 @@ interface HomeworkItem {
 const PatientDetails: React.FC = () => {
   const router = useRouter();
   const { patientId } = router.query;
-  const { user, hydrated } = useUser();
+  const { user, hydrated, logout } = useUser();
   const { execute } = useApi();
   const [selectedReportType, setSelectedReportType] = useState("daily");
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -74,6 +72,10 @@ const PatientDetails: React.FC = () => {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [appointmentsLoading, setAppointmentsLoading] = useState(false);
   const [appointmentsError, setAppointmentsError] = useState<string | null>(null);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [notes, setNotes] = useState<any[]>([]);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [notesError, setNotesError] = useState<string | null>(null);
 
   const currentTime = useMemo(() => {
     if (!user?.business_date) return new Date();
@@ -159,13 +161,6 @@ const PatientDetails: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId, user?.token, router.isReady, hydrated]);
 
-  // Map API templates to ReportTypes format
-  const reportTypeButtons = reportTemplates.map((tpl: any) => ({
-    id: tpl.id?.toString() || tpl.type || tpl.name,
-    name: tpl.name,
-    icon: FileText,
-  }));
-
   const handleReportTypeSelect = (templateId: string) => {
     setSelectedReportType(templateId);
     const templateObj = reportTemplates.find(
@@ -196,6 +191,29 @@ const PatientDetails: React.FC = () => {
     }).format(date);
   };
 
+  const formatTime = (date: Date) => {
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    }).format(date);
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
+
+  // Get initials from patient name
+  const getInitials = (name: string) => {
+    if (!name) return "P";
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+
   const fetchHomework = () => {
     // Get patientId as string (handle array case from Next.js query)
     const patientIdStr = Array.isArray(patientId) ? patientId[0] : patientId;
@@ -206,7 +224,7 @@ const PatientDetails: React.FC = () => {
     setHomeworkError(null);
     execute<any>(
       "get",
-      `/v1/patients/homeworks?consultant_id=${selectedConsultant?.id}&patient_id=${patientIdStr}&page=1&per_page=5`,
+      `/v1/patients/homeworks?consultant_id=&patient_id=${patientIdStr}&page=1&per_page=10`,
       undefined,
       {
         onSuccess: (data) => {
@@ -340,133 +358,168 @@ const PatientDetails: React.FC = () => {
         <div className="text-center py-8 text-red-500">{error}</div>
       ) : (
         <>
-          <PatientHeader patient={patientData} currentTime={currentTime} />
+          {/* Header */}
+          <header className="w-full bg-white shadow-sm">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <div className="flex items-center">
+                  <div className="mr-4">
+                    <Avatar className="h-16 w-16 border-2 border-medical-teal">
+                      <AvatarImage 
+                        src={patientData?.photo} 
+                        alt={patientData?.name || "Patient"}
+                      />
+                      <AvatarFallback className="bg-medical-lightBlue text-medical-blue text-lg font-semibold">
+                        {getInitials(patientData?.name || "Patient")}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-medical-darkGray">{patientData?.name || "Patient"}</h1>
+                    <div className="mt-1">
+                      <div className="flex items-center flex-wrap gap-2">
+                        <span className="text-sm font-medium text-medical-text">Diagnoses:</span>
+                        {(patientData?.diagnoses || []).map((diagnosis: string, index: number) => (
+                          <span 
+                            key={index} 
+                            className="text-xs font-medium px-2 py-1 bg-medical-lightBlue text-medical-blue rounded-full"
+                          >
+                            {diagnosis}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center text-medical-darkGray mb-1 gap-6">
+                  <Calendar size={18} className="mr-1" />
+                  <span>{formatDate(currentTime)}</span>
+                  <button
+                    onClick={() => router.push('/reset-password')}
+                    className="flex items-center text-medical-text hover:text-medical-teal transition-colors"
+                  >
+                    <Settings size={18} className="mr-1" />
+                    <span>Settings</span>
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center text-medical-text hover:text-medical-teal transition-colors"
+                  >
+                    <LogOut size={18} className="mr-1" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+              
+              {/* Therapy Departments */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {(patientData?.preferred_consultants || []).map((consultant: any, index: number) => (
+                  <div 
+                    key={index} 
+                    className="flex items-center glass-card px-3 py-1 rounded-md"
+                  >
+                    <span className="text-xs font-medium text-medical-teal">{consultant.department}:</span>
+                    <span className="text-xs ml-1 text-medical-darkGray">{consultant.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </header>
+          
+          {/* Main Content */}
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col lg:flex-row space-y-8 lg:space-y-0">
-              <div className="lg:w-[70%] lg:pr-6">
-                {/* Appointments Section */}
-                <div className="glass-card rounded-xl p-6 mb-6">
+            <div className="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
+              {/* Schedule Section - 70% width */}
+              <div className="lg:w-[70%]">
+                <div className="glass-card rounded-xl p-6">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold text-medical-darkGray flex items-center">
                       <Calendar size={20} className="mr-2 text-medical-teal" />
-                      Today's Appointments
+                      Today's Therapy Schedule
                     </h2>
                     <span className="text-sm font-medium px-3 py-1 bg-medical-lightBlue text-medical-blue rounded-full">
-                      {user?.business_date ? formatDate(new Date(user.business_date)) : formatDate(currentTime)}
+                      {formatDate(currentTime)}
                     </span>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {appointmentsLoading && (
-                      <div className="col-span-full text-center py-4 text-medical-text">
-                        Loading appointments...
-                      </div>
-                    )}
-                    {appointmentsError && (
-                      <div className="col-span-full text-center py-4 text-red-500">
-                        {appointmentsError}
-                      </div>
-                    )}
-                    {!appointmentsLoading &&
-                      !appointmentsError &&
-                      appointments.length === 0 && (
-                        <div className="col-span-full text-center py-4 text-medical-text">
-                          No appointments found.
-                        </div>
-                      )}
-                    {appointments.map((appointment: any) => (
-                      <ScheduleTile
-                        key={
-                          appointment.id ||
-                          appointment.appointment_id ||
-                          Math.random()
-                        }
-                        appointment={appointment}
-                        onClick={() => {}}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Therapist Section */}
-                <div className="glass-card rounded-xl p-6 mb-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold text-medical-darkGray flex items-center">
-                      <User size={18} className="mr-2 text-medical-teal" />
-                      Therapists
-                    </h2>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {patientData.preferred_consultants.map((consultant: any, index: number) => {
-                      const isSelected = selectedConsultant?.id === consultant.id;
+                  
+                  {appointmentsLoading && (
+                    <div className="text-center py-8 text-medical-text">
+                      Loading appointments...
+                    </div>
+                  )}
+                  {appointmentsError && (
+                    <div className="text-center py-8 text-red-500">{appointmentsError}</div>
+                  )}
+                  {!appointmentsLoading && !appointmentsError && appointments.length === 0 && (
+                    <div className="text-center py-8 text-medical-text">
+                      No appointments found.
+                    </div>
+                  )}
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
+                    {appointments.map((appointment: any) => {
+                      const therapistName = appointment.consultant_name || appointment.department || appointment.group || "Therapist";
+                      const department = appointment.category_name || appointment.department || "Therapy";
+                      const timeSlot = appointment.slot_name && appointment.slot_end_time
+                        ? `${appointment.slot_name} - ${appointment.slot_end_time}`
+                        : appointment.slot_name || "";
+                      const room = appointment.group || appointment.department || "Room TBD";
+                      const isOnline = appointment.is_online === true;
+                      const meetLink = appointment.zoom_start_url || appointment.zoom_join_url;
 
                       return (
-                        <div
-                          key={index}
-                          className={`bg-white rounded-lg p-4 shadow-sm transition-shadow border ${
-                            isSelected
-                              ? "border-medical-teal bg-medical-lightBlue"
-                              : "border-gray-100"
-                          } hover:shadow-md hover:border-medical-teal cursor-pointer`}
-                          onClick={() => setSelectedConsultant(consultant)}
+                        <div 
+                          key={appointment.id || appointment.appointment_id || Math.random()}
+                          className="glass-card p-4 rounded-lg hover:shadow-md transition-shadow card-hover"
                         >
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 rounded-full bg-medical-lightBlue flex items-center justify-center mr-3">
-                              <User
-                                size={16}
-                                className="text-medical-blue"
-                              />
-                            </div>
+                          <div className="flex items-start justify-between">
                             <div>
-                              <p className="text-sm font-medium text-medical-darkGray">
-                                {consultant.name}
-                              </p>
-                              <p className="text-xs text-medical-text">
-                                {consultant.department}
-                              </p>
-                              <p className="text-xs text-medical-text">
-                                Code: {consultant.code}
-                              </p>
+                              <h3 className="font-medium text-medical-darkGray">{therapistName}</h3>
+                              <p className="text-sm text-medical-text">{department}</p>
                             </div>
+                            {isOnline && (
+                              <span className="flex items-center text-xs font-medium px-2 py-1 bg-medical-pink/10 text-medical-pink rounded-full">
+                                <Video size={14} className="mr-1" />
+                                Online
+                              </span>
+                            )}
                           </div>
+                          
+                          <div className="mt-3 flex justify-between items-center text-sm text-medical-text">
+                            <div className="flex items-center">
+                              <Clock size={14} className="mr-1" />
+                              <span>{timeSlot}</span>
+                            </div>
+                            <span>{room}</span>
+                          </div>
+                          
+                          {isOnline && meetLink && (
+                            <a 
+                              href={meetLink} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="mt-3 text-xs flex items-center justify-center text-white bg-medical-blue hover:bg-blue-600 rounded-md px-3 py-1 transition-colors"
+                            >
+                              <Video size={14} className="mr-1" />
+                              Join Meeting
+                            </a>
+                          )}
                         </div>
                       );
                     })}
                   </div>
                 </div>
-                
-                {/* <ReportTypes
-                  reportTypes={reportTypeButtons}
-                  selectedReportType={selectedReportType}
-                  onReportTypeSelect={handleReportTypeSelect}
-                />
-                
-                {reportTemplates.length === 0 ? (
-                  <div className="glass-card rounded-xl p-6 mb-6 text-center text-medical-text">
-                    <p className="mb-2">
-                      No report templates found.
-                    </p>
-                  </div>
-                ) : (
-                  <ReportList
-                    reports={reports}
-                    selectedReportType={selectedReportType}
-                    reportTypeName={
-                      reportTypeButtons.find((rt) => rt.id === selectedReportType)
-                        ?.name || ""
-                    }
-                    onReportSelect={handleReportSelect}
-                  />
-                )} */}
               </div>
-              <div className="lg:w-[30%]">
+              
+              {/* Right Sidebar - 30% width */}
+              <div className="lg:w-[30%] space-y-6">
                 {/* Homework Section */}
-                <HomeworkSection
+                <HomeworkSection 
                   homework={homework}
                   isOpen={homeworkOpen}
                   onOpenChange={setHomeworkOpen}
-                  isTherapist={true}
+                  isTherapist={false}
                   homeworkLoading={homeworkLoading}
                   homeworkError={homeworkError}
                   onRefresh={fetchHomework}

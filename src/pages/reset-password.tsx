@@ -51,7 +51,7 @@ const ResetPassword = () => {
     try {
       await execute<any>(
         'put',
-        `/v1/consultants/${user.user_id}`,
+        `/v1/patients/${user.user_id}`,
         {
           password: newPassword
         },

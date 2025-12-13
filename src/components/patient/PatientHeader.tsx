@@ -67,7 +67,7 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({
   };
 
   const handleBack = () => {
-    router.push("/patient-selection");
+    router.back();
   };
 
   const handleAddDiagnosisInput = () => {

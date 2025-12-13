@@ -96,7 +96,7 @@ const LoginPage = () => {
           <div className="glass-card p-8 rounded-xl shadow-lg">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-medical-darkGray mb-2">
-               Login
+               Client Login
               </h1>
               <p className="text-medical-text">Sign in to your account</p>
             </div>
@@ -105,7 +105,7 @@ const LoginPage = () => {
                 {/* Email Field */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-medical-darkGray mb-1">
-                    Email
+                    Client ID / Email
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
