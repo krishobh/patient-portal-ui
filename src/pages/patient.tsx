@@ -476,7 +476,7 @@ const PatientDetails: React.FC = () => {
                           <div className="flex items-start justify-between">
                             <div>
                               <h3 className="font-medium text-medical-darkGray">{therapistName}</h3>
-                              <p className="text-sm text-medical-text">{department}</p>
+                              {/* <p className="text-sm text-medical-text">{department}</p> */}
                             </div>
                             {isOnline && (
                               <span className="flex items-center text-xs font-medium px-2 py-1 bg-medical-pink/10 text-medical-pink rounded-full">
@@ -491,7 +491,7 @@ const PatientDetails: React.FC = () => {
                               <Clock size={14} className="mr-1" />
                               <span>{timeSlot}</span>
                             </div>
-                            <span>{room}</span>
+                            {/* <span>{room}</span> */}
                           </div>
                           
                           {isOnline && meetLink && (

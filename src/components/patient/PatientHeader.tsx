@@ -170,7 +170,7 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({
                     </span>
                   </div>
                   <div className="mt-1">
-                    <div className="flex items-center flex-wrap gap-2">
+                    {/* <div className="flex items-center flex-wrap gap-2">
                       <span className="text-sm font-medium text-medical-text">
                         Diagnoses:
                       </span>
@@ -182,7 +182,7 @@ const PatientHeader: React.FC<PatientHeaderProps> = ({
                           {diagnosis}
                         </span>
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
