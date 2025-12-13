@@ -459,7 +459,7 @@ const PatientDetails: React.FC = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
                     {appointments.map((appointment: any) => {
-                      const therapistName = appointment.consultant_name || appointment.department || appointment.group || "Therapist";
+                      const therapistName = appointment.consultant_name || "GROUP SESSION";
                       const department = appointment.category_name || appointment.department || "Therapy";
                       const timeSlot = appointment.slot_name && appointment.slot_end_time
                         ? `${appointment.slot_name} - ${appointment.slot_end_time}`
