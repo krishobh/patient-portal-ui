@@ -1,0 +1,266 @@
+@import "tailwindcss";
+
+@theme {
+  /* Container Configuration */
+  --container-padding: 2rem;
+  --container-max-width-2xl: 1400px;
+
+  /* Border Radius */
+  --radius: 0.5rem;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Animation Durations */
+  --animation-duration-fast: 0.2s;
+  --animation-duration-normal: 0.5s;
+  --animation-duration-slow: 2s;
+
+  /* Animation Timing Functions */
+  --animation-ease-out: ease-out;
+  --animation-cubic-bezier: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* Medical Colors */
+  --color-medical-teal: #00CEC8;
+  --color-medical-lightTeal: #00E5E0;
+  --color-medical-blue: #2D82FE;
+  --color-medical-lightBlue: #E9F3FF;
+  --color-medical-pink: #FF6B8B;
+  --color-medical-lightGray: #F8F9FD;
+  --color-medical-darkGray: #444A6D;
+  --color-medical-text: #394360;
+
+  /* Base Colors */
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  /* Primary Colors */
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  /* Secondary Colors */
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  /* Destructive Colors */
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  /* Muted Colors */
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  /* Accent Colors */
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  /* Popover Colors */
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  /* Card Colors */
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  /* Sidebar Colors */
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+}
+
+:root {
+  /* Base HSL Values */
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 0 0% 3.9%;
+  
+  /* Primary HSL Values */
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+  
+  /* Secondary HSL Values */
+  --secondary: 0 0% 96.1%;
+  --secondary-foreground: 0 0% 9%;
+  
+  /* Destructive HSL Values */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* Muted HSL Values */
+  --muted: 0 0% 96.1%;
+  --muted-foreground: 0 0% 45.1%;
+  
+  /* Accent HSL Values */
+  --accent: 0 0% 96.1%;
+  --accent-foreground: 0 0% 9%;
+  
+  /* Popover HSL Values */
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 3.9%;
+  
+  /* Card HSL Values */
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 3.9%;
+  
+  /* Sidebar HSL Values */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 0 0% 3.9%;
+  --sidebar-primary: 0 0% 9%;
+  --sidebar-primary-foreground: 0 0% 98%;
+  --sidebar-accent: 0 0% 96.1%;
+  --sidebar-accent-foreground: 0 0% 9%;
+  --sidebar-border: 0 0% 89.8%;
+  --sidebar-ring: 0 0% 3.9%;
+
+  /* Animation Keyframes */
+  --radix-accordion-content-height: 0;
+}
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 186 100% 40%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 215 20% 65%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 186 100% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 215 25% 27%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 215 20% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight text-medical-darkGray;
+  }
+
+  p {
+    @apply text-medical-text;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm shadow-md border border-white/80 rounded-xl;
+  }
+  
+  .primary-button {
+    @apply bg-medical-teal hover:bg-medical-lightTeal text-white font-medium py-2 px-4 rounded-md transition-all duration-300 shadow-sm hover:shadow;
+  }
+  
+  .secondary-button {
+    @apply bg-medical-lightBlue hover:bg-blue-100 text-medical-blue font-medium py-2 px-4 rounded-md transition-all duration-300;
+  }
+  
+  .nav-link {
+    @apply text-medical-text hover:text-medical-teal transition-colors duration-300;
+  }
+  
+  .card-hover {
+    @apply hover:shadow-lg transition-all duration-300 hover:translate-y-[-2px];
+  }
+
+  .slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  .staggered-item:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  
+  .staggered-item:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .staggered-item:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  
+  .staggered-item:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  
+  .staggered-item:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+}
+
+.in-progress {
+    background: #c0efff;
+}
+
+.done {
+background: #89ad6a;
+}
+
+.approved {
+background: #7bd52d;
+}
+
+.cancelled {
+    background: #ffb7c9;
+}
+
+.editor-locked .fr-wrapper{
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+
