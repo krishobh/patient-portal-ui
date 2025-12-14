@@ -312,7 +312,8 @@ const PatientDetails: React.FC = () => {
               id: `${appointmentDate}-${index}`,
               appointment_id: `${appointmentDate}-${index}`,
               consultant_id: log.consultant || null,
-              consultant_name: log.consultant || '',
+              consultant_name: log.consultant_name || '',
+              consultant: log.consultant || '',
               is_online: log.is_online === true,
               availability_date: appointmentDate,
               slot_name: log.time || '',
@@ -327,6 +328,8 @@ const PatientDetails: React.FC = () => {
               department_id: log.department || null,
               group: log.group,
               department: log.department,
+              department_name: log.department_name,
+              group_name: log.group_name,
             });
           });
         });
@@ -476,7 +479,7 @@ const PatientDetails: React.FC = () => {
                           <div className="flex items-start justify-between">
                             <div>
                               <h3 className="font-medium text-medical-darkGray">{therapistName}</h3>
-                              {/* <p className="text-sm text-medical-text">{department}</p> */}
+                              <p className="text-sm text-medical-text">{therapistName === "GROUP SESSION" ? appointment.group || appointment.department_name : appointment.consultant}</p>
                             </div>
                             {isOnline && (
                               <span className="flex items-center text-xs font-medium px-2 py-1 bg-medical-pink/10 text-medical-pink rounded-full">

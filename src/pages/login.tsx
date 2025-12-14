@@ -113,7 +113,6 @@ const LoginPage = () => {
                     </div>
                     <input
                       id="email"
-                      type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="block w-full pl-10 py-2 sm:text-sm border border-gray-200 rounded-md focus:ring-medical-teal focus:border-medical-teal"
