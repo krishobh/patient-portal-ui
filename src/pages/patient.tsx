@@ -7,6 +7,7 @@ import { Calendar, Clock, Settings, LogOut, Video } from "lucide-react";
 import { useApi } from "@/hooks/useApi";
 import { useUser } from "@/contexts/UserContext";
 import ProtectedLayout from "@/layouts/ProtectedLayout";
+import ReportList from "@/components/patient/ReportList";
 
 interface Patient {
   id: string;
@@ -163,25 +164,40 @@ const PatientDetails: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId, user?.token, router.isReady, hydrated]);
 
-  const handleReportTypeSelect = (templateId: string) => {
-    setSelectedReportType(templateId);
-    const templateObj = reportTemplates.find(
-      (tpl: any) => tpl.id?.toString() == templateId
+  useEffect(() => {
+    if ( !user?.token) return;
+    fetchReport();
+  }, [ user?.token, router.isReady, hydrated, patientId]);
+  const fetchReport = () => {
+    if (!patientId) return;
+    execute<any>(
+      "get",
+      `/v1/patient-report?page=1&per_page=10&patient_id=${patientId}`,
+      undefined,
+      {
+        onSuccess: (data) => {
+          // Map API response to ReportList expected format
+          const mappedReports = (data.data || []).map((report: any) => ({
+            id: report.id,
+            title: report.title || "Untitled Report",
+            date: report.created_at || report.modified_at,
+            author: `Consultant ID: ${report.created_by}`, // We'll show consultant ID for now
+            content: report.description || "",
+            status: report.status,
+            report_template_id: report.report_template_id,
+            approved_by: report.approved_by,
+            approved_at: report.approved_at,
+            creator: report.creator,
+          }));
+          setReports(mappedReports);
+        },
+        onError: (error) => {
+          console.error("Failed to fetch reports:", error);
+          setReports([]);
+        },
+      },
+      { Authorization: `Bearer ${user?.token}` }
     );
-    setSelectedTemplate(templateObj || null);
-
-    // Filter reports by template
-    if (templateObj) {
-      const filteredReports = reports.filter(
-        (r) => r.report_template_id === templateObj.id?.toString()
-      );
-      // In a real app, you'd fetch reports here
-    }
-  };
-
-  const handleReportSelect = (report: Report) => {
-    setSelectedReport(report);
-    // In a real app, you'd open a modal or navigate to report details
   };
 
   const formatDate = (date: Date) => {
@@ -418,7 +434,7 @@ const PatientDetails: React.FC = () => {
                       </AvatarFallback>
                     </Avatar>
                   </div>
-                  
+
                   <div>
                     <h1 className="text-2xl font-bold text-medical-darkGray">
                       {patientData?.name || "Patient"}
@@ -439,7 +455,11 @@ const PatientDetails: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                      <img src={user?.organisation?.logo} alt={user?.organisation?.name} className="h-6" />
+                  <img
+                    src={user?.organisation?.logo}
+                    alt={user?.organisation?.name}
+                    className="h-6"
+                  />
                 </div>
                 <div className="flex items-center text-medical-darkGray mb-1 gap-6">
                   <Calendar size={18} className="mr-1" />
@@ -604,6 +624,19 @@ const PatientDetails: React.FC = () => {
                   onRefresh={fetchHomework}
                 />
               </div>
+            </div>
+            <div>
+              <ReportList
+                reports={reports}
+                selectedReportType={selectedReportType}
+                reportTypeName=""
+                onReportSelect={(report) => {
+                  // Changed: Use query parameter instead of dynamic route
+                  router.push(
+                    `/patient-edit-report?id=${patientId}&reportId=${report.id}`
+                  );
+                }}
+              />
             </div>
           </main>
         </>
