@@ -507,7 +507,7 @@ const PatientDetails: React.FC = () => {
             <div className="flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
               {/* Schedule Section - 70% width */}
               <div className="lg:w-[70%]">
-                <div className="glass-card rounded-xl p-6">
+                <div className="glass-card rounded-xl p-6 mb-6">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold text-medical-darkGray flex items-center">
                       <Calendar size={20} className="mr-2 text-medical-teal" />
