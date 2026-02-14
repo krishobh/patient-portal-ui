@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import apiClient from '@/lib/api-client';
 import { ApiError } from '@/lib/api-client';
 import { handleApiError } from '@/lib/api-error-handler';
 import { useToast } from '@/contexts/ToastContext';
-import { AxiosResponse } from 'axios';
+import { useUser } from '@/contexts/UserContext';
 
 type ApiMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
 
@@ -16,6 +17,8 @@ interface ApiOptions<T> {
 
 export const useApi = () => {
   const { toast } = useToast();
+  const router = useRouter();
+  const { logout } = useUser();
   const [isLoading, setIsLoading] = useState(false);
 
   const execute = async <T>(
@@ -46,7 +49,15 @@ export const useApi = () => {
       return response.data;
     } catch (error) {
       const apiError = error as ApiError;
-      if (options.onError) {
+      if (apiError.status === 401) {
+        logout();
+        toast({
+          title: "Session Expired",
+          description: "Please login again.",
+          variant: "destructive",
+        });
+        router.replace("/login");
+      } else if (options.onError) {
         options.onError(apiError);
       } else {
         handleApiError(apiError, toast);
