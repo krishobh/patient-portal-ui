@@ -630,6 +630,7 @@ const PatientDetails: React.FC = () => {
                 reports={reports}
                 selectedReportType={selectedReportType}
                 reportTypeName=""
+                patientId={Array.isArray(patientId) ? patientId[0] : patientId}
                 onReportSelect={(report) => {
                   // Changed: Use query parameter instead of dynamic route
                   router.push(

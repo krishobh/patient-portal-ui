@@ -1,5 +1,7 @@
 import React from 'react';
 import { File, FileText } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { Button } from '@/components/ui/button';
 
 const regex = /(<([^>]+)>)/gi;
 
@@ -20,14 +22,22 @@ interface ReportListProps {
   selectedReportType: string;
   reportTypeName: string;
   onReportSelect: (report: Report) => void;
+  patientId?: string;
 }
 
 const ReportList: React.FC<ReportListProps> = ({
   reports,
   selectedReportType,
   reportTypeName,
-  onReportSelect
+  onReportSelect,
+  patientId
 }) => {
+  const router = useRouter();
+
+  const handleViewAllReports = () => {
+    router.push(`/all-reports?patientId=${patientId}`);
+  };
+
   return (
     <div className="glass-card rounded-xl p-6">
       <div className="flex justify-between items-center mb-6">
@@ -35,6 +45,13 @@ const ReportList: React.FC<ReportListProps> = ({
           <FileText size={20} className="mr-2 text-medical-teal" />
           {reportTypeName || 'Reports'}
         </h2>
+        <Button 
+          onClick={handleViewAllReports}
+          size="sm"
+          className="bg-medical-teal hover:bg-medical-teal/90 text-white"
+        >
+          View All Reports
+        </Button>
       </div>
       
       {reports.length > 0 ? (
