@@ -102,7 +102,7 @@ const ReportList: React.FC<ReportListProps> = ({
           </div>
           <h3 className="text-lg font-medium text-medical-darkGray mb-1">No Reports Found</h3>
           <p className="text-sm text-medical-text">
-            There are no {reportTypeName?.toLowerCase()} available for this patient.
+            There are no {reportTypeName?.toLowerCase()} available.
           </p>
         </div>
       )}
