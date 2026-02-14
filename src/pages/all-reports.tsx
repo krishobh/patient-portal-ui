@@ -90,7 +90,7 @@ const AllReportsPage = () => {
     setLoading(true);
     setError(null);
 
-    let query = `/v1/patient-report?page=${currentPage}&per_page=${itemsPerPage}&patient_id=${patientId}&is_available_for_patient=false`;
+    let query = `/v1/patient-report?page=${currentPage}&per_page=${itemsPerPage}&patient_id=${patientId}&is_available_for_patient=true`;
     
     if (selectedStatus !== "all") {
       query += `&status=${selectedStatus}`;
